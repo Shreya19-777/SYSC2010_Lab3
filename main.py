@@ -32,7 +32,7 @@ plt.show()
 
 #  250 Hz
 ecg_sig_250 = nk.ecg_simulate(duration = 10, sampling_rate = 250)
-#Cunstructing time axis
+#Constructing time axis
 time = np.arange(len(ecg_sig_250))/250 #which is 10 seconds
 #plotting the ECG signal
 plt.figure(figsize=(12,6))
@@ -44,7 +44,7 @@ plt.xticks(np.arange(0,11,0.5))
 plt.show()
 # 125 Hz
 ecg_sig_125 = nk.ecg_simulate(duration = 10, sampling_rate = 125)
-#Cunstructing time axis
+#Constructing time axis
 time = np.arange(len(ecg_sig_125))/125 #which is 10 seconds
 #plotting the ECG signal
 plt.figure(figsize=(12,6))
@@ -53,6 +53,23 @@ plt.title("Simulated ECG Signal (125Hz)")
 plt.xlabel("Time (s)")
 plt.ylabel("Amplitude")
 plt.xticks(np.arange(0,11,0.5))
+plt.show()
+
+#Section 4 FFT Transform
+#4.2
+fft_values = np.fft.rfft(ecg_sig)
+magnitude = np.abs(fft_values)
+sampling_rate = 250
+freq_axis = np.fft.rfftfreq(len(ecg_sig), d=1/sampling_rate)
+
+# Plot
+plt.figure()
+plt.plot(freq_axis, magnitude)
+plt.title("Frequency Spectrum of ECG")
+plt.xlabel("Frequency (Hz)")
+plt.ylabel("Magnitude")
+plt.xlim(0, 50)
+plt.grid()
 plt.show()
 
 #5.2 Adding noise to the ECG signal
@@ -67,6 +84,8 @@ plt.xlabel("Time (s)")
 plt.ylabel("Amplitude")
 plt.xticks(np.arange(0,11,0.5))
 plt.show()
+
+#6.2
 
 #7.2 Low Pass Filter 
 butter(4, 40, btype='low', fs=1000)
