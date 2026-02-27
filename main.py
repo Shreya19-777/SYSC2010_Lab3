@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import neurokit2 as nk
-from scipy.signal import butter
+from scipy.signal import butter, filtfilt
+
 
 # 2.2 Generating ECG signal
 ecg_sig = nk.ecg_simulate(duration = 10, sampling_rate = 1000)
@@ -63,7 +64,7 @@ sampling_rate = 250
 freq_axis = np.fft.rfftfreq(len(ecg_sig), d=1/sampling_rate)
 
 # Plot
-plt.figure()
+plt.figure(figsize=(12,6))
 plt.plot(freq_axis, magnitude)
 plt.title("Frequency Spectrum of ECG")
 plt.xlabel("Frequency (Hz)")
@@ -86,6 +87,51 @@ plt.xticks(np.arange(0,11,0.5))
 plt.show()
 
 #6.2
+noisy_fft_values = np.fft.rfft(noisy_ecg)
+noisy_magnitude = np.abs(noisy_fft_values)
+
+# 2. Plotting the comparison
+plt.figure(figsize=(12, 6))
+
+# Plot 1: Clean ECG Spectrum
+plt.subplot(2, 1, 1)
+plt.plot(freq_axis, magnitude, color='blue')
+plt.title("Frequency Spectrum: Clean ECG")
+plt.xlim(0, 100) # ECG plus a bit of room for noise observation
+plt.ylabel("Magnitude")
+plt.grid(True)
+
+# Subplot 2: Noisy ECG Spectrum
+plt.subplot(2, 1, 2)
+plt.plot(freq_axis, noisy_magnitude, color='red')
+plt.title("Frequency Spectrum: Noisy ECG")
+plt.xlim(0, 100)
+plt.xlabel("Frequency (Hz)")
+plt.ylabel("Magnitude")
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+
 
 #7.2 Low Pass Filter 
-butter(4, 40, btype='low', fs=1000)
+def butter_lp(data, cutoff, fs, order=5):
+    nyquist_f = 0.5 * fs
+    normal_cutoff = cutoff / nyquist_f
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    y = filtfilt(b, a, data)
+    return y
+
+# Applying filter with 40 Hz cutoff
+cutoff_freq = 40
+filtered_ecg = butter_lp(noisy_ecg, cutoff_freq, sampling_rate)
+
+plt.figure(figsize=(12, 6))
+plt.plot(noisy_ecg, label='Noisy ECG', color='blue')
+plt.plot(filtered_ecg, label='Filtered ECG', color='green')
+plt.title("Noisy vs. Filtered ECG")
+plt.xlabel("Samples")
+plt.ylabel("Amplitude")
+plt.legend()
+plt.grid(True)
+plt.show()
