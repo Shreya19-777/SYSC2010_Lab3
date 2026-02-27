@@ -135,3 +135,18 @@ plt.ylabel("Amplitude")
 plt.legend()
 plt.grid(True)
 plt.show()
+
+#Plotting the FFT
+filtered_fft = np.fft.rfft(filtered_ecg)
+filtered_magnitude = np.abs(filtered_fft)
+
+plt.figure(figsize=(12, 6))
+plt.plot(freq_axis, noisy_magnitude, label='Noisy signal', alpha=0.4, color='red')
+plt.plot(freq_axis, filtered_magnitude, label='Filtered signal', color='blue')
+plt.title("FFT of Filtered Signal")
+plt.xlabel("Frequency (Hz)")
+plt.ylabel("Magnitude")
+plt.xlim(0, 60)
+plt.legend()
+plt.grid(True)
+plt.show()
